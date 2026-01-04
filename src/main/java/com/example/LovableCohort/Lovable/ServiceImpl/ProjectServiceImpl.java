@@ -19,6 +19,7 @@ import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
@@ -50,7 +51,7 @@ public class ProjectServiceImpl implements ProjectService {
 
         return pr ;
     }
-
+    @PreAuthorize("@security.checkProjectAccessibilty(#id)")
     @Override
     public ProjectResponse getUserProjectById(Long id) {
         Long userId = jwtAuth.getUserId();
@@ -84,6 +85,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
+    @PreAuthorize("@security.checkEditAccessibilty(#id)")
     public ProjectResponse updateProject(Long id, ProjectRequest request) {
         Long userId = jwtAuth.getUserId();
         Project project = getAllAssociatedProject(id,userId);
@@ -94,6 +96,7 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
+    @PreAuthorize("@security.checkDeleteAccesibilty(#id)")
     public void softDelete(Long id) {
         Long userId = jwtAuth.getUserId();
             Project deleteProject = getAllAssociatedProject(id,userId);

@@ -39,7 +39,7 @@ public class JwtAuthImpl {
                 .subject(user.getEmail())
                 .claim("userId",user.getId())
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis()+1000*60*20))
+                .expiration(new Date(System.currentTimeMillis()+1000*60*25))
                 .signWith(secretKey())
                 .compact() ;
 

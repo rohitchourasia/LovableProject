@@ -19,6 +19,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.jspecify.annotations.Nullable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -35,6 +36,7 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
     UserRepository userRepository;
     JwtAuthImpl jwtAuth ;
     @Override
+    @PreAuthorize("@security.canView(#projectId)")
     public List<MemberResponse> getProjectMembers(Long projectId) {
 
         List<MemberResponse>members = new ArrayList<>() ;
@@ -46,6 +48,7 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
     }
 
     @Override
+    @PreAuthorize("@security.canManage(#projectId)")
     public MemberResponse inviteMember(Long projectId, InviteMemberRequest request) {
         Long userId = jwtAuth.getUserId();
         Project p = projectRepository.findProjectyByUserandId(userId,projectId).orElseThrow() ;
@@ -71,6 +74,7 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
     }
 
     @Override
+    @PreAuthorize("@security.canManage(#projectId)")
     public MemberResponse updateMemberRole(Long projectId, Long memberId, InviteMemberRequest request) {
         Long userId = jwtAuth.getUserId();
         Project p = projectRepository.findById(projectId).orElseThrow(()->new ResourceNotFoundException("pROJECT",projectId.toString()));
@@ -84,6 +88,7 @@ public class ProjectMemberServiceImpl implements ProjectMemberService {
     }
 
     @Override
+    @PreAuthorize("@security.canManage(#projectId)")
     public  void deleteProjectMember(Long projectId, Long memberId) {
         Long userId = jwtAuth.getUserId();
         Project p = projectRepository.findProjectyByUserandId(userId,projectId).orElseThrow(()->new ResourceNotFoundException("project member",projectId.toString())) ;

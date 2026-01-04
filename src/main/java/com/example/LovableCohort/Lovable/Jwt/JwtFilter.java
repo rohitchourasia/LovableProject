@@ -30,12 +30,7 @@ public class JwtFilter extends OncePerRequestFilter {
     @Autowired
     @Qualifier("handlerExceptionResolver")
    private  HandlerExceptionResolver handlerExceptionResolver ;
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) {
-        System.out.println(request.getServletPath());
-        return request.getServletPath().startsWith("/api/auth");
 
-    }
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         System.out.println("entering here");
