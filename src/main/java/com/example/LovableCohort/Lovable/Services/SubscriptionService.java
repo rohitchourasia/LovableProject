@@ -9,7 +9,5 @@ public interface SubscriptionService {
 
     SubscriptionResponse getCurrentSubcription(Long userId);
 
-     CheckoutResponse createCheckoutSessionUrl(Long userId);
 
-     PortalResponse openPortal(Long userId);
 }

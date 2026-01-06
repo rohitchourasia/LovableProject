@@ -13,13 +13,5 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         return null;
     }
 
-    @Override
-    public CheckoutResponse createCheckoutSessionUrl(Long userId) {
-        return null;
-    }
 
-    @Override
-    public PortalResponse openPortal(Long userId) {
-        return null;
-    }
 }

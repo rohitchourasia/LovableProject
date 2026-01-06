@@ -1,6 +1,7 @@
 package com.example.LovableCohort.Lovable.Controllers;
 
 import com.example.LovableCohort.Lovable.DTO.subscription.*;
+import com.example.LovableCohort.Lovable.Services.PaymentProcessor;
 import com.example.LovableCohort.Lovable.Services.PlanService;
 import com.example.LovableCohort.Lovable.Services.SubscriptionService;
 import lombok.AllArgsConstructor;
@@ -18,6 +19,7 @@ import java.util.List;
 public class BillingController {
     private final PlanService planService ;
     private final  SubscriptionService subscriptionService ;
+    private final PaymentProcessor paymentProcessor;
     @GetMapping(path="/api/plans")
     public ResponseEntity<List<PlanResponse>>getAllPlans(){
         return ResponseEntity.ok(planService.getPlans());
@@ -27,14 +29,14 @@ public class BillingController {
         return  ResponseEntity.ok(subscriptionService.getCurrentSubcription(userId)) ;
 
     }
-    @PostMapping(path="/api/stripe/checkout")
+    @PostMapping(path="/api/payment/checkout")
     public ResponseEntity<CheckoutResponse>createCheckoutResponse(@RequestBody CheckoutRequest  checkoutRequest){
         Long userId = 1L ;
-        return ResponseEntity.ok(subscriptionService.createCheckoutSessionUrl(userId));
+        return ResponseEntity.ok(paymentProcessor.createCheckoutSessionUrl(checkoutRequest));
     }
-    @PostMapping(path="/api/stripe/portal")
+    @PostMapping(path="/api/payment/portal")
     public ResponseEntity<PortalResponse>openCustomerPortal(){
         Long userId = 1L ;
-        return ResponseEntity.ok(subscriptionService.openPortal(userId));
+        return ResponseEntity.ok(paymentProcessor.openPortal(userId));
     }
 }

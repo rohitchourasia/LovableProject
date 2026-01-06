@@ -1,9 +1,6 @@
 package com.example.LovableCohort.Lovable.Entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -14,11 +11,13 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
 public class Plan {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id ;
     String name ;
+    @Column(unique = true)
     String stripePriceId ;
     Integer maxProjects ;
     Integer maxTokensPerDay;
