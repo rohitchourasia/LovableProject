@@ -13,6 +13,7 @@ import com.example.LovableCohort.Lovable.Repository.ProjectMemberRepository;
 import com.example.LovableCohort.Lovable.Repository.ProjectRepository;
 import com.example.LovableCohort.Lovable.Repository.UserRepository;
 import com.example.LovableCohort.Lovable.Services.ProjectService;
+import com.example.LovableCohort.Lovable.Services.ProjectTemplateService;
 import com.example.LovableCohort.Lovable.errors.ResourceNotFoundException;
 import com.example.LovableCohort.Lovable.mapper.ProjectMapper;
 import jakarta.transaction.Transactional;
@@ -38,6 +39,7 @@ public class ProjectServiceImpl implements ProjectService {
     UserRepository userRepository ;
     ProjectMapper projectMapper ;
     ProjectMemberRepository projectMemberRepository;
+    ProjectTemplateService projectTemplateService;
     JwtAuthImpl jwtAuth ;
 
     @Override
@@ -80,6 +82,7 @@ public class ProjectServiceImpl implements ProjectService {
                 .invitedAt(Instant.now())
                 .build();
         projectMemberRepository.save(projectMember);
+        projectTemplateService.initializeProjectFromTemplate(proj.getId());
        return projectMapper.projectToProjectResponse(proj);
 
     }

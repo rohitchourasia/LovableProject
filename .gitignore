@@ -31,3 +31,5 @@ build/
 
 ### VS Code ###
 .vscode/
+### Local Spring Profiles ###
+src/main/resources/application-dev.yaml

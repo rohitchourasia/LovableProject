@@ -7,6 +7,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.Instant;
+import java.util.List;
 
 @Getter
 @Setter
@@ -27,6 +28,8 @@ public class ChatMessage {
     MessageRole role;
 
     String toolCalls; // JSON Array of Tools Called
+    @OneToMany(mappedBy = "chatMessage",cascade = {CascadeType.ALL})
+    List<ChatEvent> eventList ;
 
     Integer tokensUsed;
 

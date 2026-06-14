@@ -22,7 +22,7 @@ public class FileController {
     @GetMapping(path="/{projectId}/{*path}")
     public ResponseEntity<FileContentResponse>getResponse(@PathVariable Long projectId,@PathVariable  String path){
         Long userId= 1L ;
-        return ResponseEntity.ok(fileService.getFileContent(projectId,userId,path));
+        return ResponseEntity.ok(fileService.getFileContent(projectId,path));
     }
 
 

@@ -1,6 +1,7 @@
 package com.example.LovableCohort.Lovable.Security;
 
 import com.example.LovableCohort.Lovable.Jwt.JwtFilter;
+import jakarta.servlet.DispatcherType;
 import jakarta.servlet.http.HttpServlet;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -29,9 +30,14 @@ public class WebSecurityConfig {
    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity){
         httpSecurity.csrf(csrf-> csrf.disable())
                 .sessionManagement(session->session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth->auth.requestMatchers("/api/auth/**").permitAll()
-                        .anyRequest().authenticated())
+                .authorizeHttpRequests(auth->auth
+                                .dispatcherTypeMatchers(DispatcherType.ASYNC).permitAll()
+                                .dispatcherTypeMatchers(DispatcherType.ERROR).permitAll()
+                                .requestMatchers("/api/auth/**","/webhooks/**").permitAll()
+                        .anyRequest().authenticated()
+                        )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
         return httpSecurity.build();
     }
     @Bean
