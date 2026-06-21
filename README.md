@@ -312,6 +312,26 @@ The platform persists conversational context through:
 * Historical Conversation Retrieval
 
 This provides the foundation for future memory and retrieval enhancements.
+## 🌐 On-Demand Code Execution Environment
+
+A dynamic code execution engine has been set up to provision isolated development runtimes inside Kubernetes. This infrastructure allows the platform to compile, run, and serve live previews of generated applications on demand.
+
+### Architecture Overview
+
+The execution engine follows a **Sidecar Pod Architecture** split into two operational layers:
+
+1. **Pre-Warmed Pod Pooling (Control Layer)**
+   To eliminate container startup delays, the Spring Boot backend maintains a pool of generic, active pods labeled as `status: idle`. 
+   * Upon a preview request, the backend instantly claims an idle pod and updates its metadata labels to `status: busy` and `project-id: {id}` to isolate it.
+   * If an environment step fails, the pod is safely deleted, prompting the Kubernetes deployment controller to automatically spin up a clean, idle replacement.
+
+2. **Dual-Container Sync Mesh (Execution Layer)**
+   Each preview instance runs two synchronized containers within a single Pod, sharing an ephemeral workspace directory (`/app` via an `emptyDir` volume):
+   * **The Syncer Container (`minio/mc`):** Connects to the platform's object storage to pull down the project files and runs a background watcher (`mc mirror --watch`) to stream real-time workspace updates.
+   * **The Runner Container (`node:20-alpine`):** Tracks the shared directory, handles dependency installation (`npm install`), and hosts the live application using Vite (`npm run dev`).
+
+### Storage & Dependency Caching
+To optimize performance, the environment uses a persistent **Node-Level Package Cache** (`hostPath`). By mapping the container's internal pnpm storage path directly to the underlying host machine's physical volume (`/mnt/pnpm-store`), downloaded project dependencies survive across pod lifetimes, allowing subsequent application initializations to link existing modules locally instead of downloading them repeatedly.
 
 ---
 
@@ -357,6 +377,7 @@ This provides the foundation for future memory and retrieval enhancements.
 * PostgreSQL
 * MinIO
 * Maven
+* Kubernetes
 
 ## Clone Repository
 
