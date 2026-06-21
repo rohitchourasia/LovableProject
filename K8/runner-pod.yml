@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: runner-pool
+  namespace: lovable-previews
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: runner
+  template:
+    metadata:
+      labels:
+        app: runner
+        status: idle
+    spec:
+      volumes:
+        # Temporary workspace shared between runner and syncer
+        - name: workspace
+          emptyDir: {}
+
+        # Persistent cache directory mapped to the host machine
+        - name: pnpm-store
+          hostPath:
+            path: /mnt/pnpm-store
+            type: DirectoryOrCreate
+
+      containers:
+        # 1. THE RUNNER (Vite / Node.js Engine)
+        - name: runner
+          image: node:20-alpine
+          workingDir: /app
+          command: ["/bin/sh", "-c", "sleep infinity"]
+          volumeMounts:
+            - name: workspace
+              mountPath: /app
+            - name: pnpm-store
+              mountPath: /root/.local/share/pnpm
+          ports:
+            - containerPort: 5173
+          resources:
+            limits:
+              memory: "1Gi" # Prevents a single runner from crashing your node
+
+        # 2. THE SYNCER (MinIO File Sync)
+        - name: syncer
+          image: minio/mc
+          command: ["/bin/sh", "-c", "sleep infinity"]
+          env:
+            # Connects directly using your ExternalName routing service shortcut
+            - name: MC_HOST_myminio
+              value: "http://minioadmin:minioadmin123@minio-service:9000"
+          volumeMounts:
+            - name: workspace
+              mountPath: /app
